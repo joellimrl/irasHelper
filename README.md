@@ -1,125 +1,80 @@
-# Default Template
+<div align="center">
+  <h1>Singapore Progressive Income Tax Estimator</h1>
+  <p><em>Lightweight, accessible, client‑side tool to estimate resident individual income tax (SGD).</em></p>
+</div>
 
 ## Overview
+This project provides an interactive income slider and numeric input to instantly estimate Singapore resident individual income tax payable using published progressive tax brackets. It is built with zero runtime dependencies (HTML, CSS, vanilla JS) and designed for deployment on GitHub Pages.
 
-This is a default template for generating projects from scratch using AI assistance. The template provides a structured approach to project creation by requiring only a simple transcript file that describes the project concept, then automating the entire development process.
+## Features
+| Feature | Description |
+|---------|-------------|
+| Income Slider & Number Input | Dual input methods kept in sync for convenience & precision |
+| Progressive Tax Calculation | Pure function implements bracketed rates | 
+| Effective Tax Rate | Displays percentage of income paid as tax |
+| Bracket Breakdown Table | Shows taxed slice and tax per bracket dynamically | 
+| Accessibility | Keyboard operable, aria-live updates, high contrast, screen-reader helpers | 
+| Dark Mode | Respects user `prefers-color-scheme` | 
+| Zero Dependencies | All logic is client-side with immutable bracket data |
 
-## Purpose
-
-This template serves as a starting point for creating any type of project by:
-- Providing a standardized project structure
-- Automating the project generation process
-- Ensuring consistent documentation and organization
-- Streamlining the development workflow from concept to implementation
-
-## How It Works
-
-The template uses a simple two-step process:
-
-1. **Define the Project**: Create a `transcript.md` file describing your project idea
-2. **Generate the Project**: Run the automated generation process to create the full project
-
-## Requirements
-
-To use this template, you only need:
-
-- A `docs/transcript.md` file containing your project description
-- All 4 prompt files in `.github/prompts/` (included in this template):
-  - `run-all.prompt.md` - Main orchestration prompt
-  - `1-ai-rule-generate.prompt.md` - AI rule generation
-  - `2-generate-imp-plan.prompt.md` - Implementation plan generation
-  - `3-execute-imp-plan.prompt.md` - Implementation execution
-
-## Usage Instructions
-
-### Step 1: Create Your Project Transcript
-
-Create a file at `docs/transcript.md` with a description of your project. This should include:
-
-- Project overview and goals
-- Key features and functionality
-- Technical requirements or preferences
-- Any specific technologies or frameworks to use
-- Target audience or use cases
-
-Example `transcript.md` content:
-```markdown
-# My Project Idea
-
-I want to create a web application that helps users track their daily habits.
-The app should have a clean, modern interface and allow users to:
-- Add custom habits to track
-- Mark habits as completed each day
-- View progress over time with charts
-- Set reminders for habits
-
-I prefer using React for the frontend and Node.js for the backend.
-The app should be responsive and work well on mobile devices.
-```
-
-### Step 2: Generate Your Project
-
-Once you have created your `transcript.md` file, run the project generation process:
-
-1. Ensure your `docs/transcript.md` file is complete and descriptive
-2. Verify all 4 prompt files are available in `.github/prompts/`
-3. Execute the generation process by running `run-all.prompt.md` with your AI assistant
-4. The system will orchestrate the other 3 prompts to create a complete project structure
-
-### What Gets Generated
-
-The generation process will create:
-- Complete project structure with appropriate files and folders
-- Source code implementing your described functionality
-- Documentation (README, setup instructions, etc.)
-- Configuration files (package.json, build scripts, etc.)
-- Development environment setup
-- Testing framework (if applicable)
+## Disclaimers
+This tool provides **illustrative estimates only**. Always verify against the official [IRAS website](https://www.iras.gov.sg/). Bracket rates should be manually confirmed periodically. Retrieval date noted in `assets/js/tax-brackets.js`.
 
 ## Project Structure
-
 ```
-defaultTemplate/
-├── README.md              # This template documentation
-├── .github/
-│   └── prompts/
-│       ├── run-all.prompt.md              # Main orchestration prompt
-│       ├── 1-ai-rule-generate.prompt.md   # AI rule generation
-│       ├── 2-generate-imp-plan.prompt.md  # Implementation planning
-│       └── 3-execute-imp-plan.prompt.md   # Implementation execution
+project-root/
+├── index.html
+├── assets/
+│   ├── css/
+│   │   └── styles.css
+│   └── js/
+│       ├── tax-brackets.js
+│       ├── tax-calc.js
+│       └── ui.js
 ├── docs/
-│   ├── transcript.md      # Your project description (you create this)
-│   └── feature/           # Additional feature documentation
+│   ├── transcript.md
+│   └── feature/
+│       └── progressive-tax-calculator.md
+└── README.md
 ```
 
-## Next Steps
+## Getting Started
+1. Open `index.html` locally in a modern browser (no build step required).
+2. Adjust the slider or type income into the number field.
+3. View real-time tax payable, effective tax rate, and bracket breakdown.
 
-1. **Create your transcript**: Write a clear description of your project in `docs/transcript.md`
-2. **Run generation**: Execute the generation process using `run-all.prompt.md` from `.github/prompts/`
-3. **Review and refine**: The generated project will be complete but can be customized further
-4. **Start developing**: Begin working on your project with the generated foundation
+## Calculation Logic
+Implemented in `assets/js/tax-calc.js`:
+```javascript
+const tax = calculateProgressiveTax(income); // Pure, deterministic
+```
+Breakdown rows generated with `computeBracketSlices(income)` for transparency.
 
-## How the Generation Process Works
+## Accessibility
+* All interactive elements have associated `<label>`s.
+* Results announced via `aria-live` region.
+* High contrast colors & focus outlines.
+* `noscript` message warns when JavaScript disabled.
 
-The template uses a 4-stage automated process:
+## Performance
+Bracket iteration is O(n) with n ≈ 11, negligible (<1ms typical). No external network calls.
 
-1. **`run-all.prompt.md`**: Orchestrates the entire generation process
-2. **`1-ai-rule-generate.prompt.md`**: Generates AI rules and guidelines for the project
-3. **`2-generate-imp-plan.prompt.md`**: Creates a detailed implementation plan
-4. **`3-execute-imp-plan.prompt.md`**: Executes the plan to generate the actual project code
+## Maintenance
+To update brackets:
+1. Edit `RESIDENT_TAX_BRACKETS` in `tax-brackets.js`.
+2. Adjust any textual ranges in `index.html` static fallback table.
+3. Update retrieval date comment and optionally note change in commit message.
 
-## Tips for Better Results
+## Future Enhancements (Ideas)
+* Add deductions / relief inputs
+* Graph effective rate vs. income
+* CSV export of breakdown
 
-- Be specific about your requirements in the transcript
-- Include examples or references if helpful
-- Mention any constraints or preferences (technologies, design style, etc.)
-- Describe the user experience you want to create
-- Include any integration requirements or external services needed
+## Contributing
+Open an issue or submit a PR. Follow semantic commit prefixes (`feat:`, `fix:`, `docs:`). Keep logic pure and UI concerns separated.
 
-## Template Maintenance
+## License
+MIT (or specify preferred license).
 
-This template is designed to be:
-- Technology-agnostic (works for any type of project)
-- Easily customizable for different project types
-- Continuously improvable based on generation results
-- Minimal but comprehensive in its approach
+## Acknowledgements
+Rates sourced from IRAS (link above). Built with guidance from internal AI rules emphasizing accessibility & performance.

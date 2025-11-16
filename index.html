@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Singapore Income Tax Estimator</title>
+  <meta name="description" content="Interactive slider estimating Singapore resident progressive income tax." />
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Singapore Progressive Income Tax Estimator</h1>
+    <p>This tool provides an <strong>illustrative</strong> estimate of resident individual income tax based on published progressive brackets. Verify latest rates at the official <a href="https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates" target="_blank" rel="noopener noreferrer">IRAS website</a>. No data is sent to any server.</p>
+    <noscript><p><strong>JavaScript disabled:</strong> Dynamic calculations will not update. Enable JavaScript for interactive estimation.</p></noscript>
+  </header>
+  <main>
+    <section>
+      <fieldset>
+        <legend>Income Input</legend>
+        <label for="incomeRange">Annual Income (SGD)</label>
+  <input id="incomeRange" type="range" min="0" max="2000000" step="1000" value="60000" aria-describedby="incomeHelp" />
+        <label for="incomeNumber">Exact Amount</label>
+  <input id="incomeNumber" type="number" min="0" max="2000000" step="1000" value="60000" />
+        <p id="incomeHelp" class="sr-only">Use slider or number input to set annual income value. Both are synchronized.</p>
+        <div id="inputAlert" class="alert" role="alert" aria-live="polite"></div>
+      </fieldset>
+      <div class="output-panel" aria-live="polite">
+        <div class="tax-summary">
+          <div>Estimated Tax Payable (Before Reliefs):</div>
+          <div id="taxValue" class="tax-summary__value"></div>
+          <div>Effective Rate: <span id="effectiveRate" class="effective-rate"></span></div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h2>Bracket Breakdown</h2>
+      <div class="table-wrapper">
+        <table aria-describedby="tableNote">
+          <thead>
+            <tr>
+              <th scope="col">Income Band (SGD)</th>
+              <th scope="col">Rate</th>
+              <th scope="col">Taxed Portion</th>
+              <th scope="col">Tax on Portion</th>
+            </tr>
+          </thead>
+          <tbody id="bracketBreakdownBody">
+            <!-- JS will populate rows. Static fallback: -->
+            <tr><td>0 - 20,000</td><td>0%</td><td>—</td><td>—</td></tr>
+            <tr><td>20,000 - 30,000</td><td>2%</td><td>—</td><td>—</td></tr>
+            <tr><td>30,000 - 40,000</td><td>3.5%</td><td>—</td><td>—</td></tr>
+            <tr><td>40,000 - 80,000</td><td>7%</td><td>—</td><td>—</td></tr>
+            <tr><td>80,000 - 120,000</td><td>11.5%</td><td>—</td><td>—</td></tr>
+            <tr><td>120,000 - 160,000</td><td>15%</td><td>—</td><td>—</td></tr>
+            <tr><td>160,000 - 200,000</td><td>18%</td><td>—</td><td>—</td></tr>
+            <tr><td>200,000 - 240,000</td><td>19%</td><td>—</td><td>—</td></tr>
+            <tr><td>240,000 - 280,000</td><td>19.5%</td><td>—</td><td>—</td></tr>
+            <tr><td>280,000 - 320,000</td><td>20%</td><td>—</td><td>—</td></tr>
+            <tr><td>320,000 - 500,000</td><td>22%</td><td>—</td><td>—</td></tr>
+            <tr><td>500,000 - 1,000,000</td><td>23%</td><td>—</td><td>—</td></tr>
+            <tr><td>&gt; 1,000,000</td><td>24%</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+        <p id="tableNote" class="sr-only">Table lists brackets, tax rate, and dynamically computed taxed portions.</p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>Disclaimer: Estimation only. Always confirm with official IRAS resources.</p>
+  </footer>
+  <script type="module" src="./assets/js/ui.js"></script>
+</body>
+</html>
