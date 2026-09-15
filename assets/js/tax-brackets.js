@@ -1,6 +1,6 @@
 // Singapore Resident Individual Income Tax Brackets
-// Source reference: https://www.iras.gov.sg/ (verify latest rates manually)
-// Retrieval date (developer to update when verifying): 2025-11-16
+// Source: https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates
+// Verified 2026-09-15. Resident rates from YA 2024 onwards.
 // Each bracket: limit (upper inclusive boundary except last), prevLimit (previous upper), rate (decimal)
 
 /** @typedef {{limit:number|null, prevLimit:number, rate:number}} TaxBracket */

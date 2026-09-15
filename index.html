@@ -3,71 +3,81 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Singapore Income Tax Estimator</title>
-  <meta name="description" content="Interactive slider estimating Singapore resident progressive income tax." />
+  <meta name="description" content="Understand your Singapore personal income tax. Start with your salary, add CPF and reliefs, and compare scenarios privately in your browser." />
+  <meta name="theme-color" content="#173b51" />
+  <title>IRAS Helper · Your tax, made clearer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23173b51'/%3E%3Cpath d='M10 28V18h5v10m3 0V12h5v16m3 0V7h5v21' fill='none' stroke='%237fe1d1' stroke-width='3'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="./assets/css/styles.css" />
 </head>
 <body>
-  <header>
-    <h1>Singapore Progressive Income Tax Estimator</h1>
-    <p>This tool provides an <strong>illustrative</strong> estimate of resident individual income tax based on published progressive brackets. Verify latest rates at the official <a href="https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates" target="_blank" rel="noopener noreferrer">IRAS website</a>. No data is sent to any server.</p>
-    <noscript><p><strong>JavaScript disabled:</strong> Dynamic calculations will not update. Enable JavaScript for interactive estimation.</p></noscript>
-  </header>
-  <main>
-    <section>
-      <fieldset>
-        <legend>Income Input</legend>
-        <label for="incomeRange">Annual Income (SGD)</label>
-  <input id="incomeRange" type="range" min="0" max="2000000" step="1000" value="60000" aria-describedby="incomeHelp" />
-        <label for="incomeNumber">Exact Amount</label>
-  <input id="incomeNumber" type="number" min="0" max="2000000" step="1000" value="60000" />
-        <p id="incomeHelp" class="sr-only">Use slider or number input to set annual income value. Both are synchronized.</p>
-        <div id="inputAlert" class="alert" role="alert" aria-live="polite"></div>
-      </fieldset>
-      <div class="output-panel" aria-live="polite">
-        <div class="tax-summary">
-          <div>Estimated Tax Payable (Before Reliefs):</div>
-          <div id="taxValue" class="tax-summary__value"></div>
-          <div>Effective Rate: <span id="effectiveRate" class="effective-rate"></span></div>
+  <a href="#main" class="skip-link">Skip to calculator</a>
+  <aside class="sidebar">
+    <a class="brand" href="#estimate" aria-label="IRAS Helper home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>IRAS<span class="brand-light">Helper</span><small>Personal tax, simplified</small></span></a>
+    <nav aria-label="Main navigation">
+      <a href="#estimate" class="nav-link active" data-page="estimate"><span aria-hidden="true">▦</span> Tax estimator</a>
+      <a href="#compare" class="nav-link" data-page="compare"><span aria-hidden="true">⇄</span> Compare scenarios</a>
+      <a href="#guide" class="nav-link" data-page="guide"><span aria-hidden="true">▤</span> Tax guide</a>
+    </nav>
+    <div class="sidebar-note"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Your numbers stay yours.</strong><p>Calculations happen in your browser. No account needed.</p><span class="small">Independent tool. Not affiliated with IRAS.</span></div>
+    <a class="official-link" href="https://mytax.iras.gov.sg/" target="_blank" rel="noopener noreferrer">Go to myTax Portal <span aria-hidden="true">↗</span></a>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><span>Singapore personal income tax</span><div class="topbar-right"><span class="verified"><i></i> Rules checked 15 Sep 2026</span><button id="save" class="button small-button">Save estimate</button></div></header>
+    <main id="main" tabindex="-1">
+      <noscript><p class="notice">Enable JavaScript to use the estimator. You can still read the tax guide and official sources below.</p></noscript>
+      <section id="page-estimate" class="page">
+        <div class="page-heading"><div><h1>Your tax, made clearer.</h1><p>Start with your salary. Add the details when you’re ready.</p></div><label class="year-label" for="year">Year of assessment<select id="year" name="year" form="tax-form"><option value="2026">YA 2026 · Income in 2025</option><option value="2027">YA 2027 · Income in 2026</option></select></label></div>
+        <div class="mode-bar"><div class="segmented" role="group" aria-label="Level of detail"><button type="button" id="quick-mode" aria-pressed="true">Quick estimate</button><button type="button" id="detail-mode" aria-pressed="false">Detailed estimate</button></div><span id="detail-status">A useful starting point, in seconds</span></div>
+        <div class="calculator-layout">
+          <form id="tax-form" novalidate>
+            <section class="panel salary-panel" aria-labelledby="salary-title">
+              <div class="section-heading"><div class="heading-icon" aria-hidden="true">$</div><div><h2 id="salary-title">Let’s start with your income</h2><p>Before employee CPF and tax, in Singapore dollars.</p></div></div>
+              <div class="salary-label-row"><label for="salary">Gross salary</label><div class="segmented compact" role="group" aria-label="Salary period"><button type="button" data-period="monthly" aria-pressed="true">Monthly</button><button type="button" data-period="annual" aria-pressed="false">Annual</button></div></div>
+              <div class="salary-input"><span>S$</span><input id="salary" name="salary" type="number" min="0" max="100000000" step="any" value="5000" inputmode="decimal" aria-describedby="salary-help" /><span id="salary-unit">/ month</span></div>
+              <label for="salary-range" class="sr-only">Adjust gross salary</label><input id="salary-range" type="range" min="0" max="20000" step="100" value="5000" /><div class="range-labels"><span>$0</span><span id="range-mid">$10,000</span><span id="range-max">$20,000+</span></div>
+              <div class="presets" aria-label="Monthly salary presets"><span>Try a salary</span><button type="button" data-salary="3000">$3k</button><button type="button" data-salary="5000">$5k</button><button type="button" data-salary="8000">$8k</button><button type="button" data-salary="12000">$12k</button></div>
+              <div class="bonus-row"><div><label for="bonus">Annual bonus &amp; AWS</label><p id="salary-help">Total bonus for the whole income year.</p></div><div class="money-input"><span>S$</span><input id="bonus" name="bonus" type="number" min="0" max="100000000" step="any" value="0" inputmode="decimal" /></div></div>
+              <div class="annual-total"><span>Annual salary + bonus</span><strong id="annual-income">S$60,000</strong></div>
+            </section>
+            <div class="assumptions-strip"><span class="info-icon" aria-hidden="true">i</span><p id="quick-assumptions">Assumes a tax resident, age 30, with full employee CPF and earned income relief.</p><button type="button" id="edit-profile">Edit</button></div>
+            <section class="details-area" aria-labelledby="details-title">
+              <div class="details-heading"><div><h2 id="details-title">Make it more yours</h2><p>Add what applies. Everything updates as you go.</p></div><button type="button" id="expand-all" class="text-button">Expand all</button></div>
+              <details class="detail-section" id="profile-section"><summary><span class="detail-symbol" aria-hidden="true">◎</span><span><strong>Your profile &amp; CPF</strong><small>Age, residency and contributions</small></span><span class="detail-meta" id="profile-meta">Estimated</span></summary><div class="detail-content">
+                <p class="field-note">This calculator covers Singapore tax residents. Citizenship and tax residency are different. <a href="#guide">Check residency in the guide</a>.</p>
+                <div class="field-grid"><label>Age on 31 Dec of income year<input name="age" id="age" type="number" value="30" min="18" max="100" step="1" /></label><label>Citizenship / PR status<select name="citizenship" id="citizenship"><option value="citizen">Singapore citizen</option><option value="pr">Permanent resident</option><option value="foreigner">Foreigner (tax resident)</option></select></label></div>
+                <label class="checkbox-label"><input name="disability" id="disability" type="checkbox" />Eligible for disability-related earned income relief</label>
+                <label>Employee CPF relief<select id="cpfMode" name="cpfMode"><option value="auto">Estimate at full contribution rates</option><option value="manual">Enter actual annual employee CPF</option><option value="none">No employee CPF contributions</option></select></label>
+                <div id="cpf-actual-wrap" hidden><label>Actual eligible employee CPF, annual (S$)<input name="cpfActual" id="cpfActual" type="number" min="0" max="100000000" step="any" value="0" /></label></div>
+                <p class="field-note" id="cpf-note">Automatic CPF assumes 12 months at the same salary and CPF age band, with bonuses subject to the annual ceiling. Use actual CPF for age-band changes, irregular pay, multiple employers or first/second-year PR rates.</p>
+              </div></details>
+              <details class="detail-section"><summary><span class="detail-symbol" aria-hidden="true">＋</span><span><strong>Other income</strong><small>Benefits, freelance work, rent and more</small></span><span class="detail-meta" id="income-meta">Optional</span></summary><div class="detail-content"><p class="field-note">Enter annual taxable amounts only. For business and rent, use your net taxable profit after allowable expenses; do not enter gross receipts. Loss carry-forwards and cross-source loss offsets need a separate computation.</p><div id="income-fields" class="field-grid"></div></div></details>
+              <details class="detail-section"><summary><span class="detail-symbol" aria-hidden="true">−</span><span><strong>Expenses &amp; donations</strong><small>Allowable costs and qualifying gifts</small></span><span class="detail-meta" id="deductions-meta">Optional</span></summary><div class="detail-content"><div id="deduction-fields" class="field-grid"></div><p class="field-note">Employment expenses must be wholly and exclusively incurred to earn your income and not reimbursed. Enter only qualifying donations to approved IPCs or the Singapore Government; the calculator applies the 2.5× deduction. <a href="https://www.iras.gov.sg/taxes/other-taxes/charities/donations-tax-deductions" target="_blank" rel="noopener noreferrer">Check donation eligibility ↗</a></p></div></details>
+              <details class="detail-section" id="retirement-section"><summary><span class="detail-symbol" aria-hidden="true">◇</span><span><strong>Retirement savings</strong><small>SRS contributions and CPF cash top-ups</small></span><span class="detail-meta" id="retirement-meta">Optional</span></summary><div class="detail-content"><div id="retirement-fields" class="field-grid"></div><p class="field-note">Enter eligible amounts contributed in the income year. CPF top-ups must meet recipient balance and family eligibility rules. Exclude transfers and amounts attracting matching grants. SRS withdrawals in the same year can reduce relief. <a href="#guide">Review the rules</a>.</p></div></details>
+              <details class="detail-section"><summary><span class="detail-symbol" aria-hidden="true">♡</span><span><strong>Family &amp; other reliefs</strong><small>Dependants, National Service and other claims</small></span><span class="detail-meta" id="reliefs-meta">Optional</span></summary><div class="detail-content"><div class="notice subtle">Enter your eligible share of each relief, after checking individual limits. These fields record your claim; they do not determine eligibility. Avoid including the same relief twice.</div><div id="relief-fields" class="field-grid"></div><p class="field-note">Child reliefs include QCR, disability child relief and WMCR. Combined limits and birth/adoption dates can affect your claim. Parent/caregiver reliefs may be shared with family. Other reliefs can include eligible self-employed CPF/MediSave, life insurance or sibling disability relief. Course fees relief has lapsed from YA 2026. <a href="https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-reliefs-rebates-and-deductions/tax-reliefs" target="_blank" rel="noopener noreferrer">Check all eligibility and limits with IRAS ↗</a></p></div></details>
+              <details class="detail-section"><summary><span class="detail-symbol" aria-hidden="true">✓</span><span><strong>Tax rebates</strong><small>Available Parenthood Tax Rebate balance</small></span><span class="detail-meta" id="rebate-meta">Optional</span></summary><div class="detail-content"><div id="rebate-fields"></div><p class="field-note">Use your allocated, unused PTR balance from myTax Portal. This reduces tax directly, after reliefs. Unused PTR may carry forward. No general personal income tax rebate is assumed for YA 2026 or the YA 2027 projection.</p></div></details>
+            </section>
+            <div class="form-footer"><span>Only add details that apply to you.</span><button type="button" id="reset" class="text-button">Reset estimate</button></div>
+          </form>
+          <aside class="result-column" aria-label="Your estimated tax">
+            <p id="validation-errors" class="notice validation-error" role="alert" hidden></p>
+            <section class="result-panel"><div class="result-top"><span>Your estimated income tax</span><span class="estimate-badge" id="estimate-badge">YA 2026</span></div><div class="tax-amount" id="tax-value">S$1,040<span>.00</span></div><p class="tax-caption">for the year <span id="projection-label"></span></p><div class="monthly-result"><span>Set aside each month</span><strong id="monthly-tax">S$86.67</strong></div><div class="rate-grid"><div><span>Effective tax rate</span><strong id="effective-rate">1.73%</strong></div><div><span>Marginal tax rate</span><strong id="marginal-rate">7%</strong></div></div><div class="allocation-bar" aria-hidden="true"><span id="net-bar"></span><span id="cpf-bar"></span><span id="tax-bar"></span></div><div class="allocation-legend"><span><i class="net-dot"></i>After CPF &amp; tax</span><span><i class="cpf-dot"></i>CPF</span><span><i class="tax-dot"></i>Tax</span></div><p class="result-note">Monthly set-aside is a budgeting guide, not an IRAS payment schedule.</p></section>
+            <section class="panel computation"><h2>How we got there</h2><dl id="computation-lines"></dl><a href="#breakdown" class="breakdown-link">Explore the tax brackets <span aria-hidden="true">↓</span></a></section>
+            <div class="estimate-footnote"><span class="info-icon" aria-hidden="true">i</span><p>An estimate based on your inputs and assumptions. Check your actual assessment with IRAS.</p></div>
+            <div id="warnings" class="warnings" aria-live="polite"></div>
+          </aside>
         </div>
-      </div>
-    </section>
-    <section>
-      <h2>Bracket Breakdown</h2>
-      <div class="table-wrapper">
-        <table aria-describedby="tableNote">
-          <thead>
-            <tr>
-              <th scope="col">Income Band (SGD)</th>
-              <th scope="col">Rate</th>
-              <th scope="col">Taxed Portion</th>
-              <th scope="col">Tax on Portion</th>
-            </tr>
-          </thead>
-          <tbody id="bracketBreakdownBody">
-            <!-- JS will populate rows. Static fallback: -->
-            <tr><td>0 - 20,000</td><td>0%</td><td>—</td><td>—</td></tr>
-            <tr><td>20,000 - 30,000</td><td>2%</td><td>—</td><td>—</td></tr>
-            <tr><td>30,000 - 40,000</td><td>3.5%</td><td>—</td><td>—</td></tr>
-            <tr><td>40,000 - 80,000</td><td>7%</td><td>—</td><td>—</td></tr>
-            <tr><td>80,000 - 120,000</td><td>11.5%</td><td>—</td><td>—</td></tr>
-            <tr><td>120,000 - 160,000</td><td>15%</td><td>—</td><td>—</td></tr>
-            <tr><td>160,000 - 200,000</td><td>18%</td><td>—</td><td>—</td></tr>
-            <tr><td>200,000 - 240,000</td><td>19%</td><td>—</td><td>—</td></tr>
-            <tr><td>240,000 - 280,000</td><td>19.5%</td><td>—</td><td>—</td></tr>
-            <tr><td>280,000 - 320,000</td><td>20%</td><td>—</td><td>—</td></tr>
-            <tr><td>320,000 - 500,000</td><td>22%</td><td>—</td><td>—</td></tr>
-            <tr><td>500,000 - 1,000,000</td><td>23%</td><td>—</td><td>—</td></tr>
-            <tr><td>&gt; 1,000,000</td><td>24%</td><td>—</td><td>—</td></tr>
-          </tbody>
-        </table>
-        <p id="tableNote" class="sr-only">Table lists brackets, tax rate, and dynamically computed taxed portions.</p>
-      </div>
-    </section>
-  </main>
-  <footer>
-    <p>Disclaimer: Estimation only. Always confirm with official IRAS resources.</p>
-  </footer>
+        <section id="breakdown" class="panel breakdown-section"><div class="section-title-row"><div><h2>A closer look at your tax</h2><p>Only the income within each band is taxed at that band’s rate.</p></div><button id="export" class="button">Export breakdown</button></div><div class="breakdown-grid"><div><div class="table-wrapper"><table><caption class="sr-only">Resident tax bracket breakdown</caption><thead><tr><th scope="col">Chargeable income band</th><th scope="col">Rate</th><th scope="col">Your portion</th><th scope="col">Tax</th></tr></thead><tbody id="bracket-rows"></tbody></table></div><button class="text-button" id="all-brackets" aria-expanded="false">Show all tax bands</button></div><div class="relief-breakdown"><h3>Your reliefs</h3><div class="relief-meter"><span id="relief-meter-fill"></span></div><p id="relief-cap-text"></p><dl id="relief-lines"></dl><p class="field-note">The $80,000 cap applies to personal reliefs. Allowable expenses and qualifying donations are separate deductions.</p></div></div><div class="learning-note"><strong>A higher bracket doesn’t mean all your income is taxed more.</strong><span id="bracket-explainer"></span></div></section>
+      </section>
+      <section id="page-compare" class="page" hidden><div class="page-heading"><div><h1>See what changes.</h1><p>Explore salary and SRS scenarios using your current profile.</p></div><a class="button" href="#estimate">Back to estimate</a></div><div class="notice">Comparisons keep your bonus, other income, deductions and reliefs. Actual CPF overrides remain fixed; automatic CPF adjusts with salary.</div><section class="panel compare-panel"><h2>What if your salary changed?</h2><p>Annual tax and the monthly salary left after estimated CPF and total income tax.</p><div id="salary-comparison" class="scenario-grid"></div><p class="field-note">Salary figures exclude non-cash benefits and other income. The tax figure covers all your taxable income. Voluntary contributions and personal expenses are not subtracted.</p></section><section class="panel compare-panel"><div class="section-title-row"><div><h2>Explore an SRS contribution</h2><p>A tax saving is one part of the decision.</p></div><span class="tag" id="srs-limit-label"></span></div><label for="srs-extra">Additional eligible contribution (S$)</label><input id="srs-extra" type="number" min="0" max="35700" step="100" value="3000" /><div class="srs-comparison" id="srs-comparison"></div><p class="field-note">Subject to SRS eligibility, contribution limits and the $80,000 relief cap. SRS funds have withdrawal conditions; early withdrawals can trigger tax and penalties. This comparison does not model investment returns or future withdrawal tax.</p><button class="button primary" id="apply-srs">Apply contribution to estimate</button></section><section class="panel compare-panel"><h2>Compare with your saved estimate</h2><div id="saved-comparison"></div><button id="load-saved" class="button" hidden>Restore saved estimate</button><button id="delete-saved" class="text-button" hidden>Delete saved estimate</button></section></section>
+      <section id="page-guide" class="page" hidden><div class="page-heading"><div><h1>A little clarity goes a long way.</h1><p>The essentials, the details, and where to go next.</p></div><span class="tag">Personal income tax guide</span></div><div class="guide-grid"><section class="panel guide-card"><span class="guide-number">1</span><h2>Choose the right year</h2><p>Your Year of Assessment (YA) usually covers income earned in the previous calendar year. YA 2026 covers income from 1 Jan to 31 Dec 2025.</p><p>YA 2027 in this tool is a planning projection for 2026 income, using published rules as checked on 15 September 2026.</p></section><section class="panel guide-card"><span class="guide-number">2</span><h2>Check tax residency</h2><p>Tax residency determines which rules apply. A foreigner can be a Singapore tax resident; nationality alone does not decide it. Duration-of-stay rules and concessions may apply.</p><p>This estimator calculates resident tax only. Non-resident employment, director fees, short-term work and treaty exemptions need their own treatment.</p><a href="https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates" target="_blank" rel="noopener noreferrer">Check residency and rates at IRAS ↗</a></section><section class="panel guide-card"><span class="guide-number">3</span><h2>Build up your taxable income</h2><p>Include salary, bonus and taxable benefits. Add net taxable trade or freelance income and your share of net rental income. Enter only taxable other income; not every receipt, investment gain or overseas payment is taxable.</p><p>Deduct allowable employment expenses and qualifying donations. Then personal reliefs reduce income to your chargeable income.</p><a href="https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/what-is-taxable-what-is-not" target="_blank" rel="noopener noreferrer">Check what is taxable ↗</a></section><section class="panel guide-card"><span class="guide-number">4</span><h2>Check reliefs before claiming</h2><p>Reliefs reduce taxable income; rebates reduce tax itself. Most reliefs have eligibility, sharing and individual limits, as well as the overall $80,000 personal relief cap.</p><p>Detailed fields accept your eligible allocated amount. For family reliefs, agree the allocation and check combined limits so the same relief is not claimed twice.</p><a href="https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-reliefs-rebates-and-deductions/tax-reliefs" target="_blank" rel="noopener noreferrer">Explore all personal reliefs ↗</a></section></div>
+        <section class="panel guide-resources"><h2>Your source of truth</h2><p>The calculation rules were checked against these official sources on 15 September 2026.</p><div id="source-links"></div></section>
+        <section class="panel guide-resources"><h2>Before you file</h2><div class="checklist"><label><input type="checkbox" />Confirm your tax residency and the income year.</label><label><input type="checkbox" />Check employment income and actual employee CPF against your records.</label><label><input type="checkbox" />Include taxable side income, rent and benefits.</label><label><input type="checkbox" />Verify relief eligibility, family allocations and unused rebate balances.</label><label><input type="checkbox" />Review the pre-filled information and filing instructions in myTax Portal.</label></div><a class="button primary" href="https://mytax.iras.gov.sg/" target="_blank" rel="noopener noreferrer">Open myTax Portal ↗</a><p class="field-note">This tool does not submit returns or connect to your IRAS account. Business tax, GST, property tax, loss carry-forwards, tax credits and specialised non-resident cases are outside this calculator.</p></section>
+      </section>
+      <footer><span>IRAS Helper <span class="footer-divider">/</span> Understand first. Plan with confidence.</span><a href="#guide">Assumptions &amp; official sources</a></footer>
+    </main>
+  </div>
+  <div id="status" class="toast" role="status" aria-live="polite"></div>
+  <div id="live-result" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
   <script type="module" src="./assets/js/ui.js"></script>
 </body>
 </html>
